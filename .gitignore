@@ -1,0 +1,12 @@
+# Environments and caches
+venv/
+temp_cache/
+pw_browsers/
+__pycache__/
+*.pyc
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

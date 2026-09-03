@@ -73,12 +73,17 @@ def scrape_barbers():
                     website_loc = page.locator('a[data-tooltip="Open website"]')
                 website = website_loc.get_attribute('href') if website_loc.count() > 0 else ""
                 
+                # Check if Google Maps itself shows a booking/appointment link
+                appointment_loc = page.locator('a[data-item-id="action:make_appointment"]')
+                has_google_booking = "Yes" if appointment_loc.count() > 0 else "No"
+                
                 if title != "Unknown":
                     results.append({
                         'Name': title,
                         'Address': address,
                         'Phone': phone,
                         'Website': website,
+                        'Has Google Booking': has_google_booking,
                         'Google Maps URL': url
                     })
                     print(f"Scraped: {title}")
@@ -109,8 +114,9 @@ def verify_and_enrich(df):
         distances.append(dist)
         
         website = row['Website']
-        booking_found = "No"
-        if website:
+        booking_found = row.get('Has Google Booking', 'No')
+        
+        if website and booking_found == "No":
             try:
                 resp = requests.get(website, timeout=8, headers={'User-Agent': 'Mozilla/5.0'})
                 if resp.status_code == 200:
